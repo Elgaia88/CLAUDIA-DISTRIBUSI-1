@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuis Prediksi Ujian Ekonomi: Materi Distribusi</title>
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & RESET (100% OFFLINE, TANPA DEPENDENSI EKSTERNAL)
+       ========================================================================== */
+    :root {
+      --bg-page: #f1f5f9;
+      --bg-gradient-start: #eef2ff;
+      --bg-gradient-end: #f8fafc;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      --brand-primary: #1e3a8a;
+      --brand-accent: #2563eb;
+      --brand-accent-hover: #1d4ed8;
+      --brand-soft: #eff6ff;
+      --brand-soft-border: #bfdbfe;
+
+      /* Warna Kontras Tinggi Sesuai Spesifikasi */
+      --option-bg: #ffffff;
+      --option-text: #0f172a;
+      --correct-bg: #15803d;
+      --correct-text: #ffffff;
+      --correct-soft: #dcfce7;
+      --correct-border: #14532d;
+
+      --wrong-bg: #b91c1c;
+      --wrong-text: #ffffff;
+      --wrong-soft: #fee2e2;
+      --wrong-border: #7f1d1d;
+
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --warn-border: #f59e0b;
+
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 10px 30px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -4px rgba(15, 23, 42, 0.04);
+      --shadow-btn: 0 4px 12px rgba(37, 99, 235, 0.24);
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      color: var(--text-primary);
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Canvas Confetti Overlay */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Container Utama */
+    .app-wrapper {
+      width: 100%;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 20px 16px 48px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 28px 24px;
+      width: 100%;
+      animation: fadeSlideUp 0.35s ease-out;
+    }
+
+    @media (min-width: 640px) {
+      .app-wrapper {
+        padding: 32px 24px 64px;
+      }
+      .card {
+        padding: 38px 36px;
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       1. HALAMAN AWAL (START SCREEN)
+       ========================================================================== */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand-soft);
+      color: var(--brand-primary);
+      border: 1px solid var(--brand-soft-border);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .quiz-main-title {
+      font-size: clamp(1.55rem, 4vw, 2.15rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .quiz-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+      margin-bottom: 24px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 480px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-box {
+      background: var(--surface-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-box-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--brand-soft);
+      color: var(--brand-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .info-box-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .info-box-value {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: var(--text-primary);
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .text-input:focus {
+      border-color: var(--brand-accent);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+    }
+
+    .text-input.input-error {
+      border-color: var(--wrong-bg);
+      box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.12);
+    }
+
+    .error-msg {
+      color: var(--wrong-bg);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .duration-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .duration-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 16px 14px;
+      background: #ffffff;
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+      min-height: 76px;
+    }
+
+    .duration-btn:hover {
+      border-color: var(--brand-accent);
+      background: var(--brand-soft);
+    }
+
+    .duration-btn.active {
+      background: var(--brand-primary);
+      color: #ffffff;
+      border-color: var(--brand-primary);
+      box-shadow: 0 6px 16px rgba(30, 58, 138, 0.25);
+    }
+
+    .duration-btn .dur-time {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .duration-btn .dur-desc {
+      font-size: 0.8rem;
+      opacity: 0.88;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 16px 24px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: inherit;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--brand-accent) 0%, var(--brand-primary) 100%);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: var(--shadow-btn);
+      transition: var(--transition);
+      min-height: 54px;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .primary-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ==========================================================================
+       2. HALAMAN KUIS (QUIZ SCREEN)
+       ========================================================================== */
+    .quiz-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .player-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      max-width: 100%;
+    }
+
+    .player-chip span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 180px;
+    }
+
+    .progress-counter {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--brand-primary);
+      background: var(--brand-soft);
+      border: 1px solid var(--brand-soft-border);
+      padding: 7px 14px;
+      border-radius: 999px;
+    }
+
+    .timer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      background: #eff6ff;
+      color: #1e3a8a;
+      border: 2px solid #93c5fd;
+      transition: var(--transition);
+    }
+
+    .timer-pill.warning {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #f59e0b;
+    }
+
+    .timer-pill.danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #ef4444;
+      animation: pulseTimer 0.7s infinite alternate;
+    }
+
+    @keyframes pulseTimer {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    /* Timer Progress Bar */
+    .timer-bar-track {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .timer-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: #2563eb;
+      border-radius: 999px;
+      transition: width 0.1s linear, background-color 0.25s ease;
+    }
+
+    .timer-bar-fill.warning {
+      background: #d97706;
+    }
+
+    .timer-bar-fill.danger {
+      background: #dc2626;
+    }
+
+    /* Teks Soal */
+    .question-box {
+      margin-bottom: 22px;
+    }
+
+    .question-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .question-text {
+      font-size: clamp(1.12rem, 2.8vw, 1.32rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* Opsi Jawaban - Kontras Tinggi (#ffffff bg & #0f172a text) */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      background-color: #ffffff;
+      color: #0f172a;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      text-align: left;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.45;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 56px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+      color: #0f172a;
+      transform: translateX(3px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      font-weight: 800;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+
+    .option-btn:hover:not(:disabled) .option-letter {
+      background-color: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .option-content {
+      flex: 1;
+    }
+
+    .option-status-icon {
+      display: none;
+      flex-shrink: 0;
+    }
+
+    /* State Jawaban Benar: Hijau (#15803d) dengan teks putih (#ffffff) */
+    .option-btn.correct {
+      background-color: #15803d !important;
+      color: #ffffff !important;
+      border-color: #14532d !important;
+      box-shadow: 0 6px 16px rgba(21, 128, 61, 0.28);
+    }
+
+    .option-btn.correct .option-letter {
+      background-color: rgba(255, 255, 255, 0.22) !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    .option-btn.correct .option-status-icon {
+      display: inline-flex;
+      color: #ffffff;
+    }
+
+    /* State Jawaban Salah: Merah (#b91c1c) dengan teks putih (#ffffff) */
+    .option-btn.wrong {
+      background-color: #b91c1c !important;
+      color: #ffffff !important;
+      border-color: #7f1d1d !important;
+      box-shadow: 0 6px 16px rgba(185, 28, 28, 0.26);
+    }
+
+    .option-btn.wrong .option-letter {
+      background-color: rgba(255, 255, 255, 0.22) !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    .option-btn.wrong .option-status-icon {
+      display: inline-flex;
+      color: #ffffff;
+    }
+
+    /* Banner Feedback & Tombol Lanjut */
+    .feedback-area {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: fadeSlideUp 0.25s ease-out;
+    }
+
+    @media (min-width: 600px) {
+      .feedback-area {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .feedback-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex: 1;
+    }
+
+    .feedback-banner.fb-correct {
+      background: var(--correct-soft);
+      color: #14532d;
+      border: 1px solid #86efac;
+    }
+
+    .feedback-banner.fb-wrong {
+      background: var(--wrong-soft);
+      color: #7f1d1d;
+      border: 1px solid #fca5a5;
+    }
+
+    .feedback-banner.fb-timeout {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+      border: 1px solid var(--warn-border);
+    }
+
+    .next-btn {
+      padding: 13px 22px;
+      background: var(--brand-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+      white-space: nowrap;
+      min-height: 48px;
+    }
+
+    .next-btn:hover {
+      background: var(--brand-accent);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       3. HALAMAN SKOR & REVIEW AKHIR (REVIEW SCREEN)
+       ========================================================================== */
+    .result-header {
+      text-align: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 24px;
+    }
+
+    .result-quiz-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--brand-primary);
+      margin-bottom: 6px;
+    }
+
+    .result-player-name {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .result-player-name strong {
+      color: var(--text-primary);
+    }
+
+    .score-showcase {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 22px 38px;
+      border-radius: 22px;
+      box-shadow: 0 12px 28px rgba(30, 58, 138, 0.25);
+      margin-bottom: 18px;
+    }
+
+    .score-label {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .score-number {
+      font-size: 3.1rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin: 4px 0;
+    }
+
+    .score-predicate {
+      font-size: 0.9rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 4px 14px;
+      border-radius: 999px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      padding: 14px 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--surface-muted);
+      text-align: center;
+    }
+
+    .stat-card.stat-correct {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .stat-card.stat-wrong {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .stat-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .stat-card.stat-correct .stat-val {
+      color: #15803d;
+    }
+
+    .stat-card.stat-wrong .stat-val {
+      color: #b91c1c;
+    }
+
+    .stat-lbl {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Filter & Review Header */
+    .review-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .review-heading {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 7px 13px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .filter-btn.active {
+      background: var(--brand-primary);
+      color: #ffffff;
+      border-color: var(--brand-primary);
+    }
+
+    /* Daftar Kartu Review 30 Soal */
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .review-item {
+      border: 1px solid var(--border-subtle);
+      border-left: 5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      background: #ffffff;
+    }
+
+    .review-item.rev-correct {
+      border-left-color: #15803d;
+    }
+
+    .review-item.rev-wrong {
+      border-left-color: #b91c1c;
+    }
+
+    .review-item.rev-timeout {
+      border-left-color: #d97706;
+    }
+
+    .review-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .review-q-num {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .review-badge {
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .review-badge.badge-ok {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .review-badge.badge-no {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .review-badge.badge-to {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .review-q-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .review-answers {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+    }
+
+    .rev-ans-row {
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .rev-ans-row.user-ok {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #14532d;
+    }
+
+    .rev-ans-row.user-bad {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #7f1d1d;
+    }
+
+    .rev-ans-row.right-key {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      color: #14532d;
+    }
+
+    .rev-ans-label {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      opacity: 0.85;
+    }
+
+    .rev-ans-val {
+      font-weight: 700;
+    }
+
+    .review-explanation {
+      background: var(--surface-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .review-explanation strong {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+  <!-- HTML5 Canvas untuk Efek Confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <main class="app-wrapper">
+    <!-- ======================================================================
+         1. HALAMAN AWAL
+         ====================================================================== -->
+    <section id="start-screen" class="card">
+      <div class="badge-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        Latihan Ujian Interaktif
+      </div>
+
+      <h1 class="quiz-main-title">Kuis Prediksi Ujian Ekonomi: Materi Distribusi</h1>
+      <p class="quiz-subtitle">
+        Uji pemahamanmu seputar pengertian distribusi, tujuan, cakupan kegiatan, badan distribusi, hambatan, sistem saluran, hingga faktor yang memengaruhi distribusi.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <div class="info-box-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div>
+            <div class="info-box-label">Jumlah Soal</div>
+            <div class="info-box-value">30 Pilihan Ganda</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <line x1="4" y1="4" x2="9" y2="9"></line>
+            </svg>
+          </div>
+          <div>
+            <div class="info-box-label">Sistem Acak</div>
+            <div class="info-box-value">Soal &amp; Jawaban Acak</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 20V10"></path>
+              <path d="M18 20V4"></path>
+              <path d="M6 20v-4"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="info-box-label">Penilaian</div>
+            <div class="info-box-value">Skor Maksimal 100</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="player-name-input" class="form-label">Nama Pemain Kuis <span style="color:#b91c1c;">*</span></label>
+        <input
+          type="text"
+          id="player-name-input"
+          class="text-input"
+          placeholder="Masukkan nama lengkap atau nama panggilanmu..."
+          maxlength="40"
+          autocomplete="off"
+        />
+        <div id="name-error" class="error-msg hidden">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>Silakan isi Nama Pemain Kuis terlebih dahulu sebelum memulai!</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Pilih Durasi Waktu per Soal</label>
+        <div class="duration-grid" role="group" aria-label="Pilihan durasi waktu per soal">
+          <button type="button" class="duration-btn" data-duration="15" id="dur-15">
+            <span class="dur-time">15 Detik</span>
+            <span class="dur-desc">Mode Cepat &amp; Menantang</span>
+          </button>
+          <button type="button" class="duration-btn active" data-duration="30" id="dur-30">
+            <span class="dur-time">30 Detik</span>
+            <span class="dur-desc">Mode Standar Ujian</span>
+          </button>
+        </div>
+      </div>
+
+      <button type="button" id="start-quiz-btn" class="primary-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        Mulai Kuis
+      </button>
+    </section>
+
+    <!-- ======================================================================
+         2. HALAMAN KUIS INTERAKTIF
+         ====================================================================== -->
+    <section id="quiz-screen" class="card hidden">
+      <div class="quiz-topbar">
+        <div class="player-chip" title="Nama Pemain">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span id="display-player-name">Pemain</span>
+        </div>
+
+        <div class="progress-counter" id="question-counter">Soal 1 / 30</div>
+
+        <div class="timer-pill" id="timer-pill" aria-live="polite">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span id="timer-text">30 dtk</span>
+        </div>
+      </div>
+
+      <!-- Progress Bar Hitungan Mundur -->
+      <div class="timer-bar-track" aria-hidden="true">
+        <div class="timer-bar-fill" id="timer-bar-fill"></div>
+      </div>
+
+      <!-- Konten Pertanyaan -->
+      <div class="question-box">
+        <div class="question-tag" id="question-category">Prediksi Soal Ujian Ekonomi</div>
+        <h2 class="question-text" id="question-text">Memuat soal...</h2>
+      </div>
+
+      <!-- Daftar Pilihan Jawaban A, B, C, D -->
+      <div class="options-list" id="options-container"></div>
+
+      <!-- Area Feedback Setelah Menjawab / Waktu Habis -->
+      <div class="feedback-area hidden" id="feedback-area">
+        <div class="feedback-banner" id="feedback-banner"></div>
+        <button type="button" class="next-btn" id="next-question-btn">
+          <span id="next-btn-label">Soal Berikutnya</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. HALAMAN SKOR & REVIEW LENGKAP
+         ====================================================================== -->
+    <section id="review-screen" class="card hidden">
+      <div class="result-header">
+        <div class="badge-pill">Hasil Evaluasi Kuis</div>
+        <h1 class="result-quiz-title">Kuis Prediksi Ujian Ekonomi: Materi Distribusi</h1>
+        <p class="result-player-name">Pemain: <strong id="review-player-name">-</strong></p>
+
+        <div class="score-showcase">
+          <span class="score-label">Skor Akhir</span>
+          <span class="score-number" id="final-score">0</span>
+          <span class="score-predicate" id="score-predicate">Selesai</span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-val" id="stat-total">30</div>
+            <div class="stat-lbl">Total Soal</div>
+          </div>
+          <div class="stat-card stat-correct">
+            <div class="stat-val" id="stat-correct">0</div>
+            <div class="stat-lbl">Jawaban Benar</div>
+          </div>
+          <div class="stat-card stat-wrong">
+            <div class="stat-val" id="stat-wrong">0</div>
+            <div class="stat-lbl">Salah / Habis Waktu</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <button type="button" id="restart-quiz-top-btn" class="primary-btn">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Main Lagi (Acak Soal &amp; Jawaban)
+        </button>
+      </div>
+
+      <div class="review-toolbar">
+        <h2 class="review-heading">Review Lengkap 30 Soal</h2>
+        <div class="filter-pills" role="group" aria-label="Filter hasil review">
+          <button type="button" class="filter-btn active" data-filter="all">Semua (30)</button>
+          <button type="button" class="filter-btn" data-filter="correct" id="filter-correct-btn">Benar (0)</button>
+          <button type="button" class="filter-btn" data-filter="wrong" id="filter-wrong-btn">Salah (0)</button>
+        </div>
+      </div>
+
+      <div class="review-list" id="review-list"></div>
+
+      <button type="button" id="restart-quiz-bottom-btn" class="primary-btn">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+        Main Lagi (Acak Soal &amp; Jawaban)
+      </button>
+    </section>
+  </main>
+
+  <script>
+    /**
+     * ==========================================================================
+     * BANK 30 SOAL PREDIKSI UJIAN EKONOMI: MATERI DISTRIBUSI
+     * Setiap soal memiliki 1 jawaban benar, 3 pengecoh relevan, dan pembahasan.
+     * ==========================================================================
+     */
+    const QUESTION_BANK = [
+      {
+        id: 1,
+        question: "Kegiatan menyalurkan barang dan jasa dari tangan produsen kepada konsumen atau dari daerah surplus ke daerah defisit disebut...",
+        correct: "Distribusi",
+        options: ["Distribusi", "Produksi", "Konsumsi", "Retribusi"],
+        explanation: "Distribusi adalah penyaluran barang dan jasa dari produsen kepada konsumen atau dari daerah kelebihan (surplus) ke daerah kekurangan (defisit)."
+      },
+      {
+        id: 2,
+        question: "Hubungan kegiatan ekonomi antara produksi, distribusi, dan konsumsi yang tepat adalah...",
+        correct: "Produksi menghasilkan barang, distribusi menyalurkan barang, konsumsi menggunakan barang",
+        options: [
+          "Produksi menghasilkan barang, distribusi menyalurkan barang, konsumsi menggunakan barang",
+          "Produksi menggunakan barang, distribusi menghasilkan barang, konsumsi menyalurkan barang",
+          "Produksi menyalurkan barang, distribusi menggunakan barang, konsumsi menghasilkan barang",
+          "Produksi menimbun barang, distribusi membeli barang, konsumsi menjual barang"
+        ],
+        explanation: "Dalam rangkaian kegiatan ekonomi, produksi menciptakan/menghasilkan barang, distribusi menyalurkannya, dan konsumsi menggunakan nilai guna barang tersebut."
+      },
+      {
+        id: 3,
+        question: "Berikut ini yang merupakan salah satu tujuan utama kegiatan distribusi adalah...",
+        correct: "Menjaga kesinambungan produksi dan mempercepat sampainya hasil produksi ke konsumen",
+        options: [
+          "Menjaga kesinambungan produksi dan mempercepat sampainya hasil produksi ke konsumen",
+          "Mengurangi nilai guna barang dan jasa di tengah masyarakat",
+          "Menumpuk hasil produksi di satu daerah agar harga jual meningkat",
+          "Membatasi konsumen dalam memperoleh barang kebutuhan pokok"
+        ],
+        explanation: "Tujuan kegiatan distribusi antara lain menyampaikan barang/jasa ke konsumen, mempercepat sampainya hasil produksi, menjaga kesinambungan produksi, serta pemerataan."
+      },
+      {
+        id: 4,
+        question: "Kegiatan distributor dalam membeli barang-barang secara langsung dari pihak produsen termasuk cakupan kegiatan distribusi berupa...",
+        correct: "Pembelian",
+        options: ["Pembelian", "Penggudangan", "Pembungkusan dan pengepakan", "Pemilahan dan pengelompokan"],
+        explanation: "Pembelian adalah langkah awal dalam cakupan kegiatan distribusi di mana distributor membeli barang-barang dari produsen."
+      },
+      {
+        id: 5,
+        question: "Kegiatan memilah-milah dan mengelompokkan barang yang dibeli sesuai bentuk, ukuran, dan mutu disebut...",
+        correct: "Pemilahan dan pengelompokan barang",
+        options: [
+          "Pemilahan dan pengelompokan barang",
+          "Pembungkusan dan pengepakan barang",
+          "Penggudangan dan penyimpanan barang",
+          "Pembelian dan penawaran barang"
+        ],
+        explanation: "Pemilahan dan pengelompokan barang dilakukan untuk mengklasifikasikan barang yang telah dibeli berdasarkan bentuk, ukuran, dan mutunya."
+      },
+      {
+        id: 6,
+        question: "Tujuan utama pembungkusan dan pengepakan barang dalam kegiatan distribusi adalah agar...",
+        correct: "Barang tidak cepat rusak, mudah diangkut, dan menarik perhatian konsumen",
+        options: [
+          "Barang tidak cepat rusak, mudah diangkut, dan menarik perhatian konsumen",
+          "Barang dapat ditimbun selamanya tanpa mengalami penurunan mutu",
+          "Harga barang menjadi jauh lebih murah daripada biaya produksinya",
+          "Produsen tidak perlu lagi melakukan pemeriksaan kualitas barang"
+        ],
+        explanation: "Pembungkusan dan pengepakan melindungi barang agar tidak cepat rusak, memudahkan pengangkutan, dan menambah daya tarik konsumen untuk membeli."
+      },
+      {
+        id: 7,
+        question: "Menyimpan sementara barang yang telah dibeli di gudang karena belum bisa langsung dijual atau sambil menunggu harga jual lebih tinggi disebut...",
+        correct: "Penggudangan",
+        options: ["Penggudangan", "Pengepakan", "Pemilahan", "Penyaluran langsung"],
+        explanation: "Penggudangan merupakan aktivitas menyimpan sementara barang di gudang sebelum dijual atau sambil menunggu harga pasar yang lebih menguntungkan."
+      },
+      {
+        id: 8,
+        question: "Apabila barang hasil produksi menumpuk di satu tempat dan tidak didistribusikan, dampak yang dapat terjadi adalah...",
+        correct: "Barang membusuk, tidak dapat dikonsumsi lagi, dan terbuang sia-sia",
+        options: [
+          "Barang membusuk, tidak dapat dikonsumsi lagi, dan terbuang sia-sia",
+          "Nilai guna barang meningkat secara otomatis seiring waktu",
+          "Kebutuhan masyarakat di daerah defisit tetap terpenuhi dengan baik",
+          "Keuntungan produsen bertambah tanpa perlu melakukan penjualan"
+        ],
+        explanation: "Salah satu manfaat distribusi adalah mencegah penumpukan barang di satu lokasi yang dapat membuat barang membusuk, rusak, dan terbuang sia-sia."
+      },
+      {
+        id: 9,
+        question: "Barang dan jasa baru dapat dikonsumsi secara optimal apabila telah berada di tempat yang tepat. Hal ini menunjukkan manfaat distribusi dalam...",
+        correct: "Meningkatkan nilai guna barang dan jasa",
+        options: [
+          "Meningkatkan nilai guna barang dan jasa",
+          "Mengurangi jumlah penyerapan tenaga kerja",
+          "Menghilangkan seluruh peran lembaga perantara",
+          "Menurunkan standar kualitas hasil produksi"
+        ],
+        explanation: "Distribusi menciptakan nilai guna tempat dan waktu sehingga barang/jasa dapat dinikmati secara optimal saat berada di tempat yang tepat."
+      },
+      {
+        id: 10,
+        question: "Kondisi jalan yang rusak, pelabuhan yang kurang memadai, serta jembatan yang belum tersedia merupakan hambatan distribusi pada aspek...",
+        correct: "Kuantitas dan kualitas infrastruktur yang tidak memadai",
+        options: [
+          "Kuantitas dan kualitas infrastruktur yang tidak memadai",
+          "Keterbatasan informasi dan teknologi komunikasi",
+          "Perubahan cuaca ekstrem dan kondisi alam",
+          "Tingginya biaya promosi dan periklanan produk"
+        ],
+        explanation: "Jalan, pelabuhan, bandara, dan jembatan termasuk sarana fisik/infrastruktur; jika kuantitas maupun kualitasnya kurang memadai, distribusi menjadi terhambat."
+      },
+      {
+        id: 11,
+        question: "Letak lokasi produksi yang berjauhan dengan tempat tinggal konsumen yang tersebar luas merupakan hambatan distribusi berupa...",
+        correct: "Jarak geografis yang relatif jauh",
+        options: [
+          "Jarak geografis yang relatif jauh",
+          "Minimnya modal kerja perusahaan",
+          "Keterbatasan teknologi informasi digital",
+          "Kurangnya kualitas bahan baku produksi"
+        ],
+        explanation: "Jarak geografis yang relatif jauh antara pabrik/produsen dengan konsumen yang tersebar mempersulit kecepatan dan efisiensi penyaluran barang."
+      },
+      {
+        id: 12,
+        question: "Seseorang atau lembaga yang bertindak sebagai distributor barang tertentu dari pabrik tertentu dan bertindak atas nama pabrik yang menugaskannya disebut...",
+        correct: "Agen",
+        options: ["Agen", "Komisioner", "Makelar", "Pedagang eceran"],
+        explanation: "Agen adalah badan atau orang yang menjadi distributor resmi barang tertentu dari suatu pabrik dan bertindak atas nama pabrik tersebut."
+      },
+      {
+        id: 13,
+        question: "Contoh badan distribusi yang berperan sebagai agen dari pabrik tertentu adalah...",
+        correct: "Agen motor Honda dan Agen sepatu Bata",
+        options: [
+          "Agen motor Honda dan Agen sepatu Bata",
+          "Warung kelontong dan pedagang asongan",
+          "Importir gandum dan eksportir kopi",
+          "Pasar tradisional dan toko grosir sembako"
+        ],
+        explanation: "Agen motor Honda dan Agen sepatu Bata merupakan contoh agen resmi yang menyalurkan produk atas nama pabrik pembuatnya."
+      },
+      {
+        id: 14,
+        question: "Badan perantara yang membeli dan menjual barang atas kemauan sendiri serta menanggung sendiri seluruh risiko yang terjadi disebut...",
+        correct: "Pedagang",
+        options: ["Pedagang", "Makelar", "Komisioner", "Agen tunggal"],
+        explanation: "Pedagang membeli barang untuk dimiliki lalu dijual kembali atas kemauannya sendiri, sehingga seluruh risiko keuntungan maupun kerugian ditanggung sendiri."
+      },
+      {
+        id: 15,
+        question: "Pedagang yang membeli berbagai macam barang dalam jumlah besar lalu menjualnya kembali kepada pedagang eceran disebut...",
+        correct: "Pedagang besar (grosir)",
+        options: [
+          "Pedagang besar (grosir)",
+          "Pedagang eceran (ritel)",
+          "Pedagang asongan",
+          "Makelar perdagangan"
+        ],
+        explanation: "Pedagang besar (seperti grosir dan toko besar) membeli barang dalam jumlah besar untuk dijual kembali kepada pedagang eceran atau pembeli partai besar."
+      },
+      {
+        id: 16,
+        question: "Perantara yang menjual dan membeli barang bukan atas namanya sendiri melainkan atas nama orang lain serta dapat berperan ganda disebut...",
+        correct: "Makelar",
+        options: ["Makelar", "Komisioner", "Pedagang grosir", "Eksportir"],
+        explanation: "Makelar bertindak sebagai perantara jual beli atas nama orang lain (pemberi kuasa) dan dapat berperan ganda baik atas nama penjual maupun pembeli."
+      },
+      {
+        id: 17,
+        question: "Imbalan berupa uang atau barang yang diterima oleh seorang makelar disebut...",
+        correct: "Kurtasi atau provisi",
+        options: ["Kurtasi atau provisi", "Komisi penjualan", "Dividen tahunan", "Royalti produksi"],
+        explanation: "Sebagai balas jasa atas kegiatan perantaraannya, seorang makelar memperoleh imbalan yang disebut kurtasi atau provisi."
+      },
+      {
+        id: 18,
+        question: "Perantara yang melakukan kegiatan menjual dan membeli barang dan jasa milik orang lain atas namanya sendiri dan bertanggung jawab penuh atas tindakannya disebut...",
+        correct: "Komisioner",
+        options: ["Komisioner", "Makelar", "Agen pabrik", "Pedagang ritel"],
+        explanation: "Komisioner memperjualbelikan barang milik orang lain atas namanya sendiri, bertanggung jawab penuh atas transaksinya, dan memperoleh imbalan komisi."
+      },
+      {
+        id: 19,
+        question: "Perbedaan utama antara makelar dan komisioner terletak pada...",
+        correct: "Makelar bertindak atas nama orang lain, sedangkan komisioner bertindak atas namanya sendiri",
+        options: [
+          "Makelar bertindak atas nama orang lain, sedangkan komisioner bertindak atas namanya sendiri",
+          "Makelar menerima komisi, sedangkan komisioner menerima kurtasi",
+          "Makelar menanggung risiko sendiri, sedangkan komisioner tidak menanggung risiko",
+          "Makelar menjual barang ke luar negeri, sedangkan komisioner hanya di dalam negeri"
+        ],
+        explanation: "Makelar bertransaksi atas nama pihak lain (pemberi kuasa) dengan imbalan kurtasi/provisi, sedangkan komisioner bertransaksi atas namanya sendiri dengan imbalan komisi."
+      },
+      {
+        id: 20,
+        question: "Seseorang atau lembaga yang membeli barang dari produsen dalam negeri kemudian menjualnya ke luar negeri disebut...",
+        correct: "Eksportir",
+        options: ["Eksportir", "Importir", "Komisioner", "Pedagang grosir"],
+        explanation: "Eksportir adalah pelaku usaha yang membeli barang dari produsen/pedagang dalam negeri lalu menjualnya ke pasar luar negeri."
+      },
+      {
+        id: 21,
+        question: "Cara-cara yang dilakukan untuk menyalurkan barang dan jasa hingga sampai ke tangan konsumen disebut...",
+        correct: "Sistem distribusi",
+        options: ["Sistem distribusi", "Manajemen produksi", "Motif konsumsi", "Hambatan distribusi"],
+        explanation: "Sistem distribusi merupakan metode atau cara-cara yang ditempuh untuk menyalurkan barang dan jasa dari produsen hingga ke konsumen."
+      },
+      {
+        id: 22,
+        question: "Penyaluran barang hasil produksi langsung dari produsen ke konsumen tanpa melalui perantara disebut...",
+        correct: "Sistem distribusi langsung",
+        options: [
+          "Sistem distribusi langsung",
+          "Sistem distribusi semi langsung",
+          "Sistem distribusi tidak langsung",
+          "Sistem distribusi bertingkat"
+        ],
+        explanation: "Sistem distribusi langsung terjadi ketika produsen menyalurkan atau menjual produknya langsung kepada konsumen tanpa perantara."
+      },
+      {
+        id: 23,
+        question: "Contoh penerapan sistem distribusi langsung adalah...",
+        correct: "Petani menjual hasil panennya langsung kepada konsumen atau produsen donat J.CO menjual langsung ke pembeli",
+        options: [
+          "Petani menjual hasil panennya langsung kepada konsumen atau produsen donat J.CO menjual langsung ke pembeli",
+          "Pabrik sepatu memasarkan produknya melalui pedagang grosir sepatu di berbagai kota",
+          "Penerbit koran menyalurkan koran melalui toko buku dan pedagang koran",
+          "Bank BRI memasarkan layanan perbankannya melalui kantor unit di desa-desa"
+        ],
+        explanation: "Petani yang menjual panen langsung ke konsumen serta gerai J.CO yang menjual donat langsung ke pembeli tidak menggunakan perantara pihak luar."
+      },
+      {
+        id: 24,
+        question: "Penyaluran hasil produksi ke konsumen yang dilakukan melalui saluran distribusi milik perusahaan sendiri disebut...",
+        correct: "Sistem distribusi semi langsung",
+        options: [
+          "Sistem distribusi semi langsung",
+          "Sistem distribusi langsung",
+          "Sistem distribusi tidak langsung",
+          "Sistem distribusi terbuka"
+        ],
+        explanation: "Sistem distribusi semi langsung menggunakan saluran distribusi (seperti kantor cabang, unit, atau agen resmi) yang dimiliki perusahaan itu sendiri."
+      },
+      {
+        id: 25,
+        question: "Bank BRI memasarkan produknya melalui unit BRI hingga ke desa-desa merupakan contoh penerapan...",
+        correct: "Sistem distribusi semi langsung",
+        options: [
+          "Sistem distribusi semi langsung",
+          "Sistem distribusi langsung",
+          "Sistem distribusi tidak langsung",
+          "Sistem distribusi konsinyasi"
+        ],
+        explanation: "Unit BRI di desa-desa adalah jaringan distribusi milik perusahaan Bank BRI sendiri, sehingga termasuk sistem distribusi semi langsung."
+      },
+      {
+        id: 26,
+        question: "Penerbit koran menyalurkan produknya melalui toko dan pedagang koran termasuk dalam sistem...",
+        correct: "Sistem distribusi tidak langsung",
+        options: [
+          "Sistem distribusi tidak langsung",
+          "Sistem distribusi langsung",
+          "Sistem distribusi semi langsung",
+          "Sistem distribusi tunggal"
+        ],
+        explanation: "Toko dan pedagang koran merupakan pihak perantara independen di luar penerbit, sehingga dikategorikan sebagai sistem distribusi tidak langsung."
+      },
+      {
+        id: 27,
+        question: "Alur saluran distribusi tidak langsung pada Saluran 3 yang benar adalah...",
+        correct: "Produsen → Grosir → Pengecer → Konsumen Akhir",
+        options: [
+          "Produsen → Grosir → Pengecer → Konsumen Akhir",
+          "Produsen → Konsumen Akhir",
+          "Produsen → Pengecer → Konsumen Akhir",
+          "Produsen → Agen → Subagen → Grosir → Pengecer → Konsumen Akhir"
+        ],
+        explanation: "Saluran 3 melewati dua perantara pedagang, yakni dari Produsen → Grosir → Pengecer → Konsumen Akhir."
+      },
+      {
+        id: 28,
+        question: "Alur saluran distribusi terpanjang (Saluran 4) melibatkan urutan...",
+        correct: "Produsen → Agen → Subagen → Grosir → Pengecer → Konsumen Akhir",
+        options: [
+          "Produsen → Agen → Subagen → Grosir → Pengecer → Konsumen Akhir",
+          "Produsen → Grosir → Pengecer → Konsumen Akhir",
+          "Produsen → Pengecer → Konsumen Akhir",
+          "Produsen → Agen → Konsumen Akhir"
+        ],
+        explanation: "Saluran 4 adalah rantai distribusi terpanjang yang melibatkan Agen, Subagen, Grosir, dan Pengecer sebelum sampai ke Konsumen Akhir."
+      },
+      {
+        id: 29,
+        question: "Pertimbangan mengenai nilai barang, besar dan berat barang, tingkat kerusakan barang, serta keluasan lini produk termasuk faktor yang memengaruhi distribusi dari aspek...",
+        correct: "Produk",
+        options: ["Produk", "Pasar", "Produsen", "Perantara"],
+        explanation: "Nilai barang, ukuran dan berat fisik, tingkat keawetan/kerusakan, serta keluasan lini produk merupakan faktor yang berasal dari aspek Produk."
+      },
+      {
+        id: 30,
+        question: "Pertimbangan mengenai pendanaan, pengalaman dan kemampuan distribusi, pengawasan, serta pelayanan distribusi termasuk faktor yang memengaruhi distribusi dari segi...",
+        correct: "Produsen",
+        options: ["Produsen", "Pasar", "Produk", "Perantara"],
+        explanation: "Kemampuan pendanaan, pengalaman distribusi, pengawasan, dan pelayanan merupakan faktor internal yang dipertimbangkan dari segi Produsen."
+      }
+    ];
+
+    /**
+     * ==========================================================================
+     * ALGORITMA PENGACAKAN FISHER-YATES SHUFFLE
+     * ==========================================================================
+     */
+    function fisherYatesShuffle(array) {
+      const cloned = [...array];
+      for (let i = cloned.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+      }
+      return cloned;
+    }
+
+    /**
+     * ==========================================================================
+     * ENGINE EFEK CONFETTI MENGGUNAKAN HTML5 CANVAS
+     * ==========================================================================
+     */
+    const ConfettiEngine = (() => {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      let animationFrameId = null;
+
+      const COLORS = [
+        "#15803d", "#22c55e", "#2563eb", "#3b82f6",
+        "#f59e0b", "#eab308", "#ec4899", "#8b5cf6", "#06b6d4"
+      ];
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      function launch(count = 110) {
+        resizeCanvas();
+        const originX = canvas.width * 0.5;
+        const originY = canvas.height * 0.42;
+
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 5 + Math.random() * 11;
+          particles.push({
+            x: originX + (Math.random() - 0.5) * 140,
+            y: originY + (Math.random() - 0.5) * 60,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - (4 + Math.random() * 5),
+            size: 6 + Math.random() * 7,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            rotation: Math.random() * 360,
+            rotationSpeed: (Math.random() - 0.5) * 14,
+            gravity: 0.28 + Math.random() * 0.12,
+            drag: 0.975,
+            shape: Math.random() > 0.35 ? "rect" : "circle",
+            alpha: 1
+          });
+        }
+
+        if (!animationFrameId) {
+          animate();
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.vx *= p.drag;
+          p.vy = p.vy * p.drag + p.gravity;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.rotationSpeed;
+
+          if (p.y > canvas.height * 0.75) {
+            p.alpha -= 0.025;
+          }
+
+          if (p.alpha <= 0 || p.y > canvas.height + 30) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+
+          if (p.shape === "rect") {
+            ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.65);
+          } else {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size / 2.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        if (particles.length > 0) {
+          animationFrameId = requestAnimationFrame(animate);
+        } else {
+          animationFrameId = null;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      function clear() {
+        particles = [];
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      return { launch, clear };
+    })();
+
+    /**
+     * ==========================================================================
+     * STATE APLIKASI & LOGIKA UTAMA KUIS
+     * ==========================================================================
+     */
+    const state = {
+      playerName: "",
+      durationPerQuestion: 30, // Default 30 detik (pilihan: 15 atau 30)
+      shuffledQuestions: [],
+      currentIndex: 0,
+      userAnswers: [], // Menyimpan riwayat setiap soal untuk halaman review
+      timerInterval: null,
+      autoAdvanceTimeout: null,
+      timeRemainingMs: 0,
+      isQuestionLocked: false,
+      reviewFilter: "all"
+    };
+
+    // Elemen DOM
+    const startScreen = document.getElementById("start-screen");
+    const quizScreen = document.getElementById("quiz-screen");
+    const reviewScreen = document.getElementById("review-screen");
+
+    const playerNameInput = document.getElementById("player-name-input");
+    const nameError = document.getElementById("name-error");
+    const dur15Btn = document.getElementById("dur-15");
+    const dur30Btn = document.getElementById("dur-30");
+    const startQuizBtn = document.getElementById("start-quiz-btn");
+
+    const displayPlayerName = document.getElementById("display-player-name");
+    const questionCounter = document.getElementById("question-counter");
+    const timerPill = document.getElementById("timer-pill");
+    const timerText = document.getElementById("timer-text");
+    const timerBarFill = document.getElementById("timer-bar-fill");
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const feedbackArea = document.getElementById("feedback-area");
+    const feedbackBanner = document.getElementById("feedback-banner");
+    const nextQuestionBtn = document.getElementById("next-question-btn");
+    const nextBtnLabel = document.getElementById("next-btn-label");
+
+    const reviewPlayerName = document.getElementById("review-player-name");
+    const finalScoreEl = document.getElementById("final-score");
+    const scorePredicateEl = document.getElementById("score-predicate");
+    const statTotalEl = document.getElementById("stat-total");
+    const statCorrectEl = document.getElementById("stat-correct");
+    const statWrongEl = document.getElementById("stat-wrong");
+    const reviewListEl = document.getElementById("review-list");
+    const filterCorrectBtn = document.getElementById("filter-correct-btn");
+    const filterWrongBtn = document.getElementById("filter-wrong-btn");
+    const restartTopBtn = document.getElementById("restart-quiz-top-btn");
+    const restartBottomBtn = document.getElementById("restart-quiz-bottom-btn");
+
+    const OPTION_LETTERS = ["A", "B", "C", "D"];
+
+    // Pilihan Durasi Waktu (15 Detik / 30 Detik)
+    [dur15Btn, dur30Btn].forEach((btn) => {
+      btn.addEventListener("click", () => {
+        dur15Btn.classList.remove("active");
+        dur30Btn.classList.remove("active");
+        btn.classList.add("active");
+        state.durationPerQuestion = parseInt(btn.dataset.duration, 10);
+      });
+    });
+
+    // Hilangkan pesan error saat user mengetik nama
+    playerNameInput.addEventListener("input", () => {
+      if (playerNameInput.value.trim().length > 0) {
+        playerNameInput.classList.remove("input-error");
+        nameError.classList.add("hidden");
+      }
+    });
+
+    // Tekan Enter pada input nama untuk mulai kuis
+    playerNameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        startQuizBtn.click();
+      }
+    });
+
+    // Tombol Mulai Kuis
+    startQuizBtn.addEventListener("click", () => {
+      const trimmedName = playerNameInput.value.trim();
+      if (!trimmedName) {
+        playerNameInput.classList.add("input-error");
+        nameError.classList.remove("hidden");
+        playerNameInput.focus();
+        return;
+      }
+
+      state.playerName = trimmedName;
+      initNewQuizSession();
+    });
+
+    /**
+     * Memulai sesi kuis baru dengan mengacak urutan 30 soal dan mengacak opsi A, B, C, D
+     */
+    function initNewQuizSession() {
+      clearTimers();
+      ConfettiEngine.clear();
+
+      // Acak urutan 30 soal dengan Fisher-Yates
+      const randomizedQuestions = fisherYatesShuffle(QUESTION_BANK).map((item) => {
+        // Acak urutan 4 opsi jawaban pada masing-masing soal dengan Fisher-Yates
+        const randomizedOptions = fisherYatesShuffle(item.options);
+        return {
+          ...item,
+          shuffledOptions: randomizedOptions
+        };
+      });
+
+      state.shuffledQuestions = randomizedQuestions;
+      state.currentIndex = 0;
+      state.userAnswers = [];
+      state.reviewFilter = "all";
+
+      displayPlayerName.textContent = state.playerName;
+
+      startScreen.classList.add("hidden");
+      reviewScreen.classList.add("hidden");
+      quizScreen.classList.remove("hidden");
+
+      renderCurrentQuestion();
+    }
+
+    function clearTimers() {
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+      if (state.autoAdvanceTimeout) {
+        clearTimeout(state.autoAdvanceTimeout);
+        state.autoAdvanceTimeout = null;
+      }
+    }
+
+    /**
+     * Menampilkan soal aktif beserta opsi jawaban & memulai timer mundur
+     */
+    function renderCurrentQuestion() {
+      clearTimers();
+      state.isQuestionLocked = false;
+
+      const currentQ = state.shuffledQuestions[state.currentIndex];
+      const totalQ = state.shuffledQuestions.length;
+
+      questionCounter.textContent = `Soal ${state.currentIndex + 1} / ${totalQ}`;
+      questionText.textContent = currentQ.question;
+
+      // Sembunyikan area feedback
+      feedbackArea.classList.add("hidden");
+      feedbackBanner.className = "feedback-banner";
+      feedbackBanner.innerHTML = "";
+
+      // Render 4 tombol pilihan jawaban
+      optionsContainer.innerHTML = "";
+      currentQ.shuffledOptions.forEach((optionText, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.dataset.value = optionText;
+
+        btn.innerHTML = `
+          <span class="option-letter">${OPTION_LETTERS[idx]}</span>
+          <span class="option-content">${escapeHtml(optionText)}</span>
+          <span class="option-status-icon" aria-hidden="true"></span>
+        `;
+
+        btn.addEventListener("click", () => handleSelectAnswer(optionText, btn));
+        optionsContainer.appendChild(btn);
+      });
+
+      // Mulai timer hitungan mundur sesuai pilihan user (15 atau 30 detik)
+      startQuestionTimer();
+    }
+
+    function startQuestionTimer() {
+      const totalMs = state.durationPerQuestion * 1000;
+      state.timeRemainingMs = totalMs;
+      const startTime = Date.now();
+
+      updateTimerUI(state.durationPerQuestion, 100);
+
+      state.timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, totalMs - elapsed);
+        state.timeRemainingMs = remaining;
+
+        const secondsLeft = Math.ceil(remaining / 1000);
+        const percentLeft = (remaining / totalMs) * 100;
+
+        updateTimerUI(secondsLeft, percentLeft);
+
+        if (remaining <= 0) {
+          clearInterval(state.timerInterval);
+          state.timerInterval = null;
+          handleTimeUp();
+        }
+      }, 100);
+    }
+
+    function updateTimerUI(secondsLeft, percentLeft) {
+      timerText.textContent = `${secondsLeft} dtk`;
+      timerBarFill.style.width = `${Math.max(0, percentLeft)}%`;
+
+      timerPill.classList.remove("warning", "danger");
+      timerBarFill.classList.remove("warning", "danger");
+
+      if (percentLeft <= 25 || secondsLeft <= 4) {
+        timerPill.classList.add("danger");
+        timerBarFill.classList.add("danger");
+      } else if (percentLeft <= 50) {
+        timerPill.classList.add("warning");
+        timerBarFill.classList.add("warning");
+      }
+    }
+
+    /**
+     * Menangani klik jawaban oleh pemain
+     */
+    function handleSelectAnswer(selectedOption, selectedBtn) {
+      if (state.isQuestionLocked) return;
+      state.isQuestionLocked = true;
+      clearTimers();
+
+      const currentQ = state.shuffledQuestions[state.currentIndex];
+      const isCorrect = selectedOption === currentQ.correct;
+
+      // Kunci semua tombol pilihan dan beri tanda warna sesuai hasil
+      const allButtons = optionsContainer.querySelectorAll(".option-btn");
+      allButtons.forEach((btn) => {
+        btn.disabled = true;
+        const val = btn.dataset.value;
+        const iconSlot = btn.querySelector(".option-status-icon");
+
+        if (val === currentQ.correct) {
+          btn.classList.add("correct");
+          iconSlot.innerHTML = getCheckIcon();
+        } else if (btn === selectedBtn && !isCorrect) {
+          btn.classList.add("wrong");
+          iconSlot.innerHTML = getCrossIcon();
+        }
+      });
+
+      // Simpan hasil jawaban untuk halaman review
+      state.userAnswers.push({
+        questionNumber: state.currentIndex + 1,
+        question: currentQ.question,
+        selectedAnswer: selectedOption,
+        correctAnswer: currentQ.correct,
+        isCorrect: isCorrect,
+        isTimeout: false,
+        explanation: currentQ.explanation
+      });
+
+      // Tampilkan feedback & efek confetti jika benar
+      if (isCorrect) {
+        ConfettiEngine.launch(115);
+        feedbackBanner.classList.add("fb-correct");
+        feedbackBanner.innerHTML = `${getCheckIcon()} <span>Hebat! Jawaban kamu benar.</span>`;
+      } else {
+        feedbackBanner.classList.add("fb-wrong");
+        feedbackBanner.innerHTML = `${getCrossIcon()} <span>Kurang tepat! Jawaban benar ditandai warna hijau.</span>`;
+      }
+
+      showNextControls(false);
+    }
+
+    /**
+     * Menangani saat waktu hitungan mundur habis (0 detik)
+     */
+    function handleTimeUp() {
+      if (state.isQuestionLocked) return;
+      state.isQuestionLocked = true;
+      clearTimers();
+
+      const currentQ = state.shuffledQuestions[state.currentIndex];
+
+      // Kunci semua opsi dan sorot jawaban benar dengan warna hijau (#15803d) teks putih
+      const allButtons = optionsContainer.querySelectorAll(".option-btn");
+      allButtons.forEach((btn) => {
+        btn.disabled = true;
+        if (btn.dataset.value === currentQ.correct) {
+          btn.classList.add("correct");
+          btn.querySelector(".option-status-icon").innerHTML = getCheckIcon();
+        }
+      });
+
+      // Catat sebagai tidak dijawab / salah
+      state.userAnswers.push({
+        questionNumber: state.currentIndex + 1,
+        question: currentQ.question,
+        selectedAnswer: null,
+        correctAnswer: currentQ.correct,
+        isCorrect: false,
+        isTimeout: true,
+        explanation: currentQ.explanation
+      });
+
+      feedbackBanner.classList.add("fb-timeout");
+      feedbackBanner.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span><strong>Waktu Habis!</strong> Jawaban benar ditampilkan warna hijau.</span>
+      `;
+
+      showNextControls(true);
+
+      // Lanjut otomatis ke soal berikutnya setelah jeda 2,5 detik (atau bisa lewat tombol lanjut)
+      state.autoAdvanceTimeout = setTimeout(() => {
+        goToNextStep();
+      }, 2500);
+    }
+
+    function showNextControls(isAutoAdvancing) {
+      const isLastQuestion = state.currentIndex >= state.shuffledQuestions.length - 1;
+      if (isLastQuestion) {
+        nextBtnLabel.textContent = isAutoAdvancing ? "Lihat Hasil (2,5 dtk)..." : "Lihat Hasil & Review";
+      } else {
+        nextBtnLabel.textContent = isAutoAdvancing ? "Lanjut Otomatis (2,5 dtk)..." : "Soal Berikutnya";
+      }
+      feedbackArea.classList.remove("hidden");
+    }
+
+    nextQuestionBtn.addEventListener("click", () => {
+      goToNextStep();
+    });
+
+    function goToNextStep() {
+      clearTimers();
+      if (state.currentIndex < state.shuffledQuestions.length - 1) {
+        state.currentIndex += 1;
+        renderCurrentQuestion();
+      } else {
+        renderFinalReview();
+      }
+    }
+
+    /**
+     * ==========================================================================
+     * HALAMAN SKOR & REVIEW LENGKAP SEMUA 30 SOAL
+     * ==========================================================================
+     */
+    function renderFinalReview() {
+      clearTimers();
+      quizScreen.classList.add("hidden");
+      reviewScreen.classList.remove("hidden");
+
+      const totalQuestions = state.shuffledQuestions.length;
+      const correctCount = state.userAnswers.filter((a) => a.isCorrect).length;
+      const wrongCount = totalQuestions - correctCount;
+
+      // Rumus wajib: score = (jumlah benar / total soal) * 100
+      const rawScore = (correctCount / totalQuestions) * 100;
+      const formattedScore = Number.isInteger(rawScore) ? rawScore : rawScore.toFixed(1);
+
+      reviewPlayerName.textContent = state.playerName;
+      finalScoreEl.textContent = formattedScore;
+      statTotalEl.textContent = totalQuestions;
+      statCorrectEl.textContent = correctCount;
+      statWrongEl.textContent = wrongCount;
+
+      // Predikat nilai
+      if (rawScore >= 85) {
+        scorePredicateEl.textContent = "Sangat Memuaskan • Siap Ujian!";
+        ConfettiEngine.launch(140);
+      } else if (rawScore >= 70) {
+        scorePredicateEl.textContent = "Baik • Pertahankan & Teliti Lagi";
+      } else {
+        scorePredicateEl.textContent = "Perlu Belajar Lagi • Pelajari Review di Bawah";
+      }
+
+      // Update label tombol filter
+      document.querySelector('[data-filter="all"]').textContent = `Semua (${totalQuestions})`;
+      filterCorrectBtn.textContent = `Benar (${correctCount})`;
+      filterWrongBtn.textContent = `Salah / Habis Waktu (${wrongCount})`;
+
+      // Reset active filter tab ke "all"
+      document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+      document.querySelector('[data-filter="all"]').classList.add("active");
+      state.reviewFilter = "all";
+
+      renderReviewItems();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderReviewItems() {
+      reviewListEl.innerHTML = "";
+
+      const filtered = state.userAnswers.filter((entry) => {
+        if (state.reviewFilter === "correct") return entry.isCorrect;
+        if (state.reviewFilter === "wrong") return !entry.isCorrect;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        reviewListEl.innerHTML = `
+          <div style="text-align:center; padding:28px 16px; color:#64748b; background:#f8fafc; border-radius:14px; border:1px dashed #cbd5e1;">
+            Tidak ada soal pada kategori filter ini.
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const card = document.createElement("article");
+        let statusClass = "rev-wrong";
+        let badgeClass = "badge-no";
+        let badgeText = "Salah";
+
+        if (item.isCorrect) {
+          statusClass = "rev-correct";
+          badgeClass = "badge-ok";
+          badgeText = "Benar";
+        } else if (item.isTimeout) {
+          statusClass = "rev-timeout";
+          badgeClass = "badge-to";
+          badgeText = "Waktu Habis";
+        }
+
+        const userAnswerDisplay = item.selectedAnswer
+          ? escapeHtml(item.selectedAnswer)
+          : "Tidak dijawab (Waktu Habis)";
+
+        card.className = `review-item ${statusClass}`;
+        card.innerHTML = `
+          <div class="review-item-header">
+            <span class="review-q-num">Soal No. ${item.questionNumber}</span>
+            <span class="review-badge ${badgeClass}">${badgeText}</span>
+          </div>
+          <div class="review-q-text">${escapeHtml(item.question)}</div>
+          <div class="review-answers">
+            <div class="rev-ans-row ${item.isCorrect ? "user-ok" : "user-bad"}">
+              <span class="rev-ans-label">Jawaban Kamu</span>
+              <span class="rev-ans-val">${userAnswerDisplay}</span>
+            </div>
+            ${
+              !item.isCorrect
+                ? `
+            <div class="rev-ans-row right-key">
+              <span class="rev-ans-label">Jawaban yang Benar</span>
+              <span class="rev-ans-val">${escapeHtml(item.correctAnswer)}</span>
+            </div>
+            `
+                : ""
+            }
+          </div>
+          <div class="review-explanation">
+            <strong>Pembahasan:</strong> ${escapeHtml(item.explanation)}
+          </div>
+        `;
+        reviewListEl.appendChild(card);
+      });
+    }
+
+    // Event listener tombol filter pada halaman review
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.reviewFilter = btn.dataset.filter;
+        renderReviewItems();
+      });
+    });
+
+    // Tombol Main Lagi (Acak Soal & Jawaban) -> Kembali ke Halaman Awal atau langsung mengacak ulang
+    function handlePlayAgain() {
+      clearTimers();
+      ConfettiEngine.clear();
+      reviewScreen.classList.add("hidden");
+      quizScreen.classList.add("hidden");
+      startScreen.classList.remove("hidden");
+      playerNameInput.value = state.playerName;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    restartTopBtn.addEventListener("click", handlePlayAgain);
+    restartBottomBtn.addEventListener("click", handlePlayAgain);
+
+    // Helper SVG & Sanitasi HTML
+    function getCheckIcon() {
+      return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    }
+
+    function getCrossIcon() {
+      return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
